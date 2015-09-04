@@ -24,7 +24,7 @@ Route::get('login', function() {
 	return view('layouts.login');
 });
 
-Route::group(['prefix' => 'admin'], function()
+Route::group(['prefix' => 'admin', 'middleware' => 'auth'], function()
 {
 	Route::get('dashboard', function()
 	{
