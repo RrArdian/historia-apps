@@ -8,7 +8,7 @@ class Kabupaten extends Model
 {
     protected $table = 'kabupaten';
 
-    protected $hidden = ['created_at', 'updated_at'];
+    protected $hidden = ['slug_nama', 'created_at', 'updated_at'];
 
     public function kecamatan()
     {

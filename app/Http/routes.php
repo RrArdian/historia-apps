@@ -47,17 +47,16 @@ Route::group(['prefix' => 'admin', 'middleware' => 'auth'], function()
 	Route::post('foto/upload', ['uses' => 'FotoController@store']);
 });
 
-Route::group(['prefix' => 'api/v1/service'], function()
+Route::group(['prefix' => 'api/v1/service', 'middleware' => 'apikey'], function()
 {
 	Route::get('peta', ['uses' => 'ApiController@peta']);
 	Route::get('peta/cari', ['uses' => 'ApiController@caripeta']);
 	Route::get('peta/terdekat', ['uses' => 'ApiController@terdekat']);
 	Route::get('kategori', ['uses' => 'ApiController@kategori']);
-	Route::get('kategori/peta', ['uses' => 'ApiController@petakategori']);
+	Route::get('kategori/{id}', ['uses' => 'ApiController@petakategori']);
 	Route::get('kabupaten', ['uses' => 'ApiController@kabupaten']);
-	Route::get('kabupaten/peta', ['uses' => 'ApiController@petakabupaten']);
-	Route::get('kabupaten/peta/cari', ['uses' => 'ApiController@caripetakabupaten']);
+	Route::get('kabupaten/peta/{id}', ['uses' => 'ApiController@petakabupaten']);
+	Route::get('kabupaten/{id}', ['uses' => 'ApiController@showkabupaten']);
 	Route::get('kecamatan', ['uses' => 'ApiController@kecamatan']);
-	Route::get('kecamatan/peta', ['uses' => 'ApiController@petakecamatan']);
-	Route::get('kecamatan/peta/cari', ['uses' => 'ApiController@caripetakecamatan']);
+	Route::get('kecamatan/{id}', ['uses' => 'ApiController@petakecamatan']);
 });

@@ -35,7 +35,7 @@ class ApiController extends Controller
 
         if ($data->count() > 0) {
 
-            return response()->json(['error' => false, 'count' => $data->count(), 'data' => ['peta' => $data]]);
+            return response()->json(['error' => false, 'count' => $data->count(), 'peta' => $data]);
         } else {
 
             return response()->json(['error' => true, 'message' => 'Data peta tidak ditemukan']);            
@@ -44,7 +44,11 @@ class ApiController extends Controller
 
     public function terdekat(Request $request)
     {
-        $data = Peta::getByDistance($request->input('lat'), $request->input('long'), $request->input('jarak'));
+        if ($request->input('limit') != '') {
+            $data = Peta::getByDistance($request->input('lat'), $request->input('long'), $request->input('jarak'), $request->input('limit'));
+        } else {
+            $data = Peta::getByDistance($request->input('lat'), $request->input('long'), $request->input('jarak'), '100');
+        }
 
         $peta = [];
 
@@ -67,29 +71,29 @@ class ApiController extends Controller
         return response()->json(['error' => false, 'kabupaten' => Kabupaten::all()]);
     }
 
-    public function petakabupaten(Request $request)
+    public function showkabupaten($id)
     {
+        return response()->json(['error' => false, 'kabupaten' => Kabupaten::whereId($id)->pluck('nama_kabupaten'), 'kecamatan' => Kecamatan::where('kabupaten_id', $id)->get()]);
+    }
+
+    public function petakabupaten(Request $request, $id)
+    {
+        $data = Kabupaten::with('kecamatan')->find($id);
+
+        $ids = [];
+
+        foreach ($data->kecamatan as $q) {
+            array_push($ids, $q->id);    
+        }
+
         if ($request->input('limit') == '') {
 
-            return response()->json(['error' => false, 'kabupaten' => Kabupaten::with('kecamatan.peta.kategori', 'kecamatan.peta.foto')->orderBy('id', 'DESC')->get()]);
+            return response()->json(['error' => false, 'kabupaten' => Kabupaten::whereId($id)->pluck('nama_kabupaten'), 'peta' => Peta::with('kategori', 'kecamatan.kabupaten', 'foto')->whereIn('kecamatan_id', $ids)->orderBy('id', 'DESC')->get()]);
         }
 
         else {
 
-            return response()->json(['error' => false, 'kabupaten' => Kabupaten::with('kecamatan.peta.kategori', 'kecamatan.peta.foto')->orderBy('id', 'DESC')->take($request->input('limit'))->get()]);
-        }
-    }
-
-    public function caripetakabupaten(Request $request)
-    {
-        $data = Kabupaten::with('kecamatan.peta.kategori', 'kecamatan.peta.foto')->where('nama_kabupaten', 'LIKE', '%'.$request->input('q').'%')->orderBy('id', 'DESC')->get();
-
-        if ($data->count() > 0) {
-
-            return response()->json(['error' => false, 'count' => $data->count(), 'data' => ['kabupaten' => $data]]);
-        } else {
-
-            return response()->json(['error' => true, 'message' => 'Data peta tidak ditemukan']);            
+            return response()->json(['error' => false, 'kabupaten' => Kabupaten::whereId($id)->pluck('nama_kabupaten'), 'peta' => Peta::with('kategori', 'kecamatan.kabupaten', 'foto')->whereIn('kecamatan_id', $ids)->orderBy('id', 'DESC')->take($request->input('limit'))->get()]);
         }
     }
 
@@ -98,29 +102,16 @@ class ApiController extends Controller
         return response()->json(['error' => false, 'kecamatan' => Kecamatan::all()]);
     }
 
-    public function petakecamatan(Request $request)
+    public function petakecamatan(Request $request, $id)
     {
         if ($request->input('limit') == '') {
 
-            return response()->json(['error' => false, 'kecamatan' => Kecamatan::with('kabupaten', 'peta.kategori', 'peta.foto')->orderBy('id', 'DESC')->get()]);
+            return response()->json(['error' => false, 'kecamatan' => Kecamatan::whereId($id)->pluck('nama_kecamatan'), 'peta' => Peta::with('kecamatan.kabupaten', 'kategori', 'foto')->whereKecamatanId($id)->orderBy('id', 'DESC')->get()]);
         }
 
         else {
 
-            return response()->json(['error' => false, 'kecamatan' => Kecamatan::with('kabupaten', 'peta.kategori', 'peta.foto')->orderBy('id', 'DESC')->take($request->input('limit'))->get()]);
-        }
-    }    
-
-    public function caripetakecamatan(Request $request)
-    {
-        $data = Kecamatan::with('kabupaten', 'peta.kategori', 'peta.foto')->where('nama_kecamatan', 'LIKE', '%'.$request->input('q').'%')->orderBy('id', 'DESC')->get();
-
-        if ($data->count() > 0) {
-
-            return response()->json(['error' => false, 'count' => $data->count(), 'data' => ['kecamatan' => $data]]);
-        } else {
-
-            return response()->json(['error' => true, 'message' => 'Data peta tidak ditemukan']);            
+            return response()->json(['error' => false, 'kecamatan' => Kecamatan::whereId($id)->pluck('nama_kecamatan'), 'peta' => Peta::with('kecamatan.kabupaten', 'kategori', 'foto')->whereKecamatanId($id)->orderBy('id', 'DESC')->take($request->input('limit'))->get()]);
         }
     }
 
@@ -141,9 +132,9 @@ class ApiController extends Controller
         return response()->json(['error' => false, 'kategori' => Kategori::all()]);
     }
 
-    public function petakategori()
+    public function petakategori($id)
     {
-        return response()->json(['error' => false, 'kategori' => Kategori::with('peta.kecamatan.kabupaten', 'peta.foto')->get()]);
+        return response()->json(['error' => false, 'kategori' => Kategori::find($id)->pluck('nama_kategori'), 'peta' => Peta::with('kategori', 'kecamatan.kabupaten', 'foto')->where('kategori_id', $id)->get()]);
     }
 
     /**

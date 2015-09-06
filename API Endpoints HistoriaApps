@@ -1,0 +1,62 @@
+API Endpoints HistoriaApps
+
+Base URL : http://historiapps.herokuapp.com
+Client ID : irwidodosquad
+Client Secret : themuiezsquad
+
+URL prefix : api/v1/service
+Endpoints Routes
+=====================================================================================================================
+| scope							| description 							| method  	| request value					| 
+=====================================================================================================================
+| peta							| Get all heritage culture data			| GET		| - 							|
+| peta?limit={integer}			| Get heritage culture limit data		| GET		| integer value 				|
+| peta/cari?q={query}			| Search heritage culture data			| GET		| string value					|
+| peta/terdekat?lat={latitude}	| Get nearby heritage culture data		| GET		| latitude current position		|
+|	&long={longitude}			|										|			| longitude current position	|
+|	&jarak={range_jarak}		|										|			| range area result	(in KM)		|
+|	&limit={integer}			| Limit result, default is 100			|			| integer area					|
+| kategori						| Get all category data					| GET		| -								|
+| kategori/{id}					| Get heritage culture data category	| GET		| kategori_id					|
+| kabupaten						| Get all kabupaten						| GET		| -								|
+| kabupaten/{id}				| Get kecamatan by kabupaten			| GET 		| kabupaten_id					|
+| kabupaten/peta/{id}			| Get heritage culture by kabupaten		| GET 		| kabupaten_id					|
+| kabupaten						| Get all kecamatan						| GET		| -								|
+| kabupaten/{id}				| Get heritage culture by kecamatan		| GET 		| kecamatan_id					|
+=====================================================================================================================
+
+Example :
+http://historiapps.herokuapp.com/api/v1/service/peta?client_id=irwidodosquad&client_secret=themuiezsquad
+{ -------- BASE URL --------} + { URL Prefix} + { endpoint scope }
+
+Result :
+{
+    "error": false,
+    "peta": [
+		{
+		    "id": "21",
+		    "kategori_id": "3",
+		    "nama_lokasi": "Impedit harum explicabo minus aut.",
+		    "deskripsi_singkat": "Itaque libero non vel. Excepturi eveniet sint magni voluptatem est animi. Voluptas animi dolores ut qui molestiae. Aut quae ullam itaque voluptate qui sit.",
+		    "deskripsi_lengkap": "Fugit similique debitis animi veritatis consectetur et aut. Expedita natus fuga ut quasi vel sunt consequatur. Beatae quo accusantium et consequuntur laudantium recusandae. Eos vero et deserunt ut. Nam eos distinctio unde blanditiis.\nEa amet aut veniam voluptates omnis ut voluptas. Nulla earum quo autem pariatur.",
+		    "alamat": "6298 Keyshawn Circles\nNew Terrencebury, MS 21847-1204",
+		    "kecamatan_id": "67",
+		    "latitude": "-68.7127280000000",
+		    "longitude": "57.27912100000",
+		    "kategori": {
+			    "id": "3",
+			    "nama_kategori": "Islam"
+			},
+			"kecamatan": {
+			    "id": "67",
+			    "kabupaten_id": "5",
+			    "nama_kecamatan": "Gondokusuman",
+			    "kabupaten": {
+		            "id": "5",
+		            "nama_kabupaten": "Yogyakarta"
+		        }
+		    },
+		    "foto": [ ]
+		}
+	]
+}
