@@ -1,6 +1,7 @@
 @extends('layouts.master')
 
 @section('css-content')
+<link rel="stylesheet" href="{{ asset('assets/plugins/bootstrap-wysihtml5/bootstrap3-wysihtml5.min.css') }}">
 <link rel="stylesheet" href="{{ asset('assets/plugins/dropzone/dropzone.min.css') }}">
 <style>
 	#map {
@@ -49,12 +50,12 @@ Peta Cagar Budaya
 						</div>
 						<div class="form-group">
 							<label for="content" class="control-label">Deskripsi Lengkap</label>
-							<textarea class="form-control" name="lengkap" cols="25" rows="5" id="content" required></textarea>	
+							<textarea class="form-control" name="lengkap" cols="25" rows="15" id="lengkap" required></textarea>	
 						</div>
 						<div class="form-group">
-							<label for="content" class="control-label">Kabupaten</label>
+							<label for="content" class="control-label">Kabupaten / Kota</label>
 							<select name="kabupaten" id="kabupaten" class="form-control" required>
-								<option>-- Pilih Kabupaten --</option>
+								<option>-- Pilih Kabupaten / Kota --</option>
 								@foreach($kabupaten as $cat => $c)
 								<option value="{!! $c->id !!}">{!! $c->nama_kabupaten !!}</option>
 								@endforeach
@@ -85,6 +86,9 @@ Peta Cagar Budaya
 						<div class="form-group">
 							<label for="photos">Foto</label>
 							<div class="dropzone" id="dropzoneFileUpload"></div>
+							<small class="text-danger"><sup>*</sup>) Ukuran foto maksimal adalah 5 MB. Jumlah foto maksimal adalah 5.</small>
+						</div>
+						<div id="urlpics">
 						</div>
 						<div class="form-group">
 							<button class="btn btn-primary btn-md" type="submit"><i class="fa fa-save"></i> Simpan</button>
@@ -102,6 +106,7 @@ Peta Cagar Budaya
 <script src="{{ asset('assets/js/gmaps.min.js') }}"></script>
 <script src="{{ asset('assets/js/maps-script.min.js') }}"></script>
 <script src="{{ asset('assets/plugins/dropzone/dropzone.min.js') }}"></script>
+<script src="{{ asset('assets/plugins/bootstrap-wysihtml5/bootstrap3-wysihtml5.all.min.js') }}"></script>
 <script>
 @if($errors->has())
 	toastr.error('Terjadi kesalahan. Silakan ulangi lagi!')
@@ -112,6 +117,7 @@ Peta Cagar Budaya
 	toastr.success("{{ \Session::get('message') }}")
 @endif
 $(document).ready(function() {
+	$('textarea').wysihtml5();
     $("#kabupaten").change(function() {
         $.getJSON("{{ url('admin/cari-kecamatan/') }}/" + $("#kabupaten").val(), function(data) {
             var $kecamatan = $("#kecamatan");
@@ -129,37 +135,32 @@ var token = "{{ \Session::getToken() }}";
 Dropzone.autoDiscover = false;
 var myDropzone = new Dropzone("div#dropzoneFileUpload", {
     url: baseUrl+"/admin/foto/upload",
-    //autoProcessQueue: false,
     dictDefaultMessage: 'Tarik file foto ke sini atau sentuh untuk mengunggah foto',
     addRemoveLinks: true,
-    maxFiles: 3,
+    maxFiles: 5,
     dictRemoveFile: 'Hapus foto',
-    autoProcessQueue: false,
+    maxFilesize: 5,
     params: {
        _token: token
     }
 });
- Dropzone.options.myAwesomeDropzone = {
-    paramName: "file", // The name that will be used to transfer the file
-    maxFilesize: 2, // MB
+
+myDropzone.on("success", function(file, res) {
+  	$("#urlpics").append($('<input type="hidden" ' + 'name="files[]" ' + 'value="' + res.path + '">'));
+});
+myDropzone.on("removedfile", function(file) {
+	$.ajax({
+		url: baseUrl+"/admin/foto/hapus",
+		type: 'post',
+		data: {_token :'{{ csrf_token() }}', 'name': file.name},
+	});
+});
+Dropzone.options.myAwesomeDropzone = {
+    paramName: "file",
     accept: function(file, done) {
     	var _ref;
         return (_ref = file.previewElement) != null ? _ref.parentNode.removeChild(file.previewElement) : void 0;
     },
-    init: function() {
-      	var submitButton = document.querySelector("#submit-all")
-      	myDropzone = this; // closure
-
-      	submitButton.addEventListener("click", function() {
-        	myDropzone.processQueue(); // Tell Dropzone to process all queued files.
-      	});
-
-      	// You might want to show the submit button only when 
-      	// files are dropped here:
-      	this.on("addedfile", function() {
-        // Show submit button here and/or inform user to click it.
-      	});
-    }
 };
 </script>
 @stop

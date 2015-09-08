@@ -41,7 +41,7 @@ class FotoController extends Controller
         $input = $request->all();
 
         $rules = array(
-            'file' => 'image|max:3000',
+            'file' => 'image|max:5000',
         );
         
         $validation = Validator::make($input, $rules);
@@ -50,16 +50,26 @@ class FotoController extends Controller
             return redirect()->back()->withInput($request->all())->withErrors($validation);
         }
         
-        $destinationPath = 'assets/img'; // upload path
-        $extension = $request->file('file')->getClientOriginalExtension(); // getting file extension
-        $fileName = rand(11111, 99999) . '.' . $extension; // renameing image
-        $upload_success = $request->file('file')->move($destinationPath, $fileName); // uploading file to given path
+        $destinationPath = 'assets/img/tmp'; // upload path
+        $namasli = $request->file('file')->getClientOriginalName();
+        //$extension = $request->file('file')->getClientOriginalExtension(); // getting file extension
+        //$fileName = rand(11111, 99999) . '.' . $extension; // renameing image
+        $upload_success = $request->file('file')->move($destinationPath, $namasli); // uploading file to given path
         
         if ($upload_success) {
-            return response()->json('success', 200);
+            return response()->json(['path' => $destinationPath . '/' . $namasli, 'nama' => $namasli], 200);
         } else {
             return response()->json('error', 400);
         }
+    }
+
+    public function delete(Request $request)
+    {
+        $file = $request->input('name');
+
+        unlink(public_path().'/assets/img/tmp'.$file);
+
+        return response()->json(['status' => 'Sukses'], 200);
     }
 
     /**
@@ -104,6 +114,6 @@ class FotoController extends Controller
      */
     public function destroy($id)
     {
-        //
+
     }
 }

@@ -4,7 +4,9 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 
+use File;
 use Validator;
+use App\Http\Models\Foto;
 use App\Http\Models\Kabupaten;
 use App\Http\Models\Kategori;
 use App\Http\Models\Peta;
@@ -50,7 +52,7 @@ class PetaController extends Controller
         $rules = [
             'nama' => 'required|max:50',
             'kategori' => 'required',
-            'singkat' => 'required|max:459',
+            'singkat' => 'required|max:2048',
             'lengkap' => 'required|max:65536',
             'kecamatan' => 'required',
             'alamat' => 'required|max:255',
@@ -75,6 +77,21 @@ class PetaController extends Controller
             $peta->latitude = $request->input('latitude');
             $peta->longitude = $request->input('longitude');
             $peta->save();
+
+            for ($i=0; $i < count($request->input('files')); $i++) {
+                $namafoto = $request->input('nama');
+                $a = $i + 1;
+                $ekstensi = explode('.', $request->input('files')[$i]);
+                $newname = str_slug($namafoto . ' ' . $a). '.' . $ekstensi[1];
+                rename($request->input('files')[$i], 'assets/img/cagar-budaya/' . $newname);
+
+                $foto = new Foto;
+                $foto->peta_id = Peta::max('id');
+                $foto->keterangan_foto = $namafoto . ' ' . $a;
+                $foto->nama_file = $newname;
+                $foto->url_foto = 'assets/img/cagar-budaya/' . $newname;
+                $foto->save();
+            }
 
             return redirect('admin/peta')->with('message', 'Data peta cagar budaya berhasil ditambahkan!');
         }
@@ -162,6 +179,16 @@ class PetaController extends Controller
     {
         $peta = Peta::find($id);
         $peta->delete();
+
+        $foto = Foto::wherePetaId($id)->get();
+
+        foreach ($foto as $q) {
+            if (File::exists(public_path().'/'.$q->url_foto)) {
+                unlink($q->url_foto);
+            }
+        }
+
+        Foto::wherePetaId($id)->delete();
 
         return redirect()->back()->with('message', 'Data peta cagar budaya berhasil dihapus');
     }

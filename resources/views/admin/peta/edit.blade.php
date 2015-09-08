@@ -1,6 +1,7 @@
 @extends('layouts.master')
 
 @section('css-content')
+<link rel="stylesheet" href="{{ asset('assets/plugins/bootstrap-wysihtml5/bootstrap3-wysihtml5.min.css') }}">
 <style>
 	#map {
 		height:300px;
@@ -97,6 +98,7 @@ Peta Cagar Budaya
 <script src="//maps.google.com/maps/api/js?sensor=true"></script>
 <script src="{{ asset('assets/js/gmaps.min.js') }}"></script>
 <script src="{{ asset('assets/js/maps-script.min.js') }}"></script>
+<script src="{{ asset('assets/plugins/bootstrap-wysihtml5/bootstrap3-wysihtml5.all.min.js') }}"></script>
 <script>
 @if($errors->has())
 	toastr.error('Terjadi kesalahan. Silakan ulangi lagi!')
@@ -107,6 +109,7 @@ Peta Cagar Budaya
 	toastr.success("{{ \Session::get('message') }}")
 @endif
 $(document).ready(function() {
+	$('textarea').wysihtml5();
     $("#kabupaten").change(function() {
         $.getJSON("{{ url('admin/cari-kecamatan/') }}/" + $("#kabupaten").val(), function(data) {
             var $kecamatan = $("#kecamatan");

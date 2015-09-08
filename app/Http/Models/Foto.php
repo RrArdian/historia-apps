@@ -8,7 +8,7 @@ class Foto extends Model
 {
     protected $table = 'foto';
 
-    protected $hidden = ['created_at', 'updated_at'];
+    protected $hidden = ['peta_id', 'nama_file', 'created_at', 'updated_at'];
 
     public function peta()
     {

@@ -14,12 +14,13 @@ class DatabaseSeeder extends Seeder
     {
         Model::unguard();
 
-        $this->call(UserTableSeeder::class);
-        $this->call(KabupatenTableSeeder::class);
-        $this->call(KecamatanTableSeeder::class);
-        $this->call(KategoriTableSeeder::class);
-        $this->call(PetaTableSeeder::class);
-        $this->call(CagarBudayaTableSeeder::class);
+        //$this->call(UserTableSeeder::class);
+        //$this->call(KabupatenTableSeeder::class);
+        //$this->call(KecamatanTableSeeder::class);
+        //$this->call(KategoriTableSeeder::class);
+        //$this->call(PetaTableSeeder::class);
+        //$this->call(CagarBudayaTableSeeder::class);
+        $this->call(ApiKeyTableSeeder::class);
 
         Model::reguard();
     }

@@ -50,10 +50,10 @@ Peta Cagar Budaya
 							</td>
 							<td><a href="{{ url('admin/peta/ubah') }}/{{ $d->slug_nama }}" class="btn btn-info btn-sm"><i class="fa fa-edit"></i> Edit</a></td>
 							<td>
-								<form action="{{ url('admin/peta/hapus') }}/{{ $d->id }}" method="POST">
+								<form action="{{ url('admin/peta/hapus') }}/{{ $d->id }}" id="delete-{{ $d->id }}" method="POST">
 									<input type="hidden" name="_method" value="DELETE">
 									<input type="hidden" name="_token" value="{{ csrf_token() }}">
-									<button type="button" class="btn btn-danger btn-sm hapus"><i class="fa fa-trash"></i> Hapus</button>
+									<button type="button" class="btn btn-danger btn-sm hapus" data-del="{{ $d->id }}"><i class="fa fa-trash"></i> Hapus</button>
 								</form>
 							</td>
 						</tr>
@@ -87,7 +87,8 @@ $('.hapus').click(function() {
 			toastr.info('<i class="fa fa-spinner fa-spin"></i><br>Sedang menghapus...');
 			toastr.options.timeOut = 5000;
 			toastr.options.extendedTimeOut = 1000;
-			$('form').submit();
+			var data = '#delete-' + $('.hapus').data('del');
+			$(data).submit();
 		}
 	});
 });

@@ -16,7 +16,7 @@ class ApiKeyMiddleware
      */
     public function handle($request, Closure $next)
     {
-        if (ApiKey::where('client_id', $request->input('client_id'))->first()) {
+        if (ApiKey::where('client_id', $request->input('client_id'))->get()) {
             
             $data = ApiKey::where('client_id', $request->input('client_id'))->pluck('client_secret');
 
@@ -31,7 +31,6 @@ class ApiKeyMiddleware
                     return response()->json(['error' => 401, 'error_description' => 'Missing credential']);
                 }
             } else {
-
                 return $next($request);
             }
         }

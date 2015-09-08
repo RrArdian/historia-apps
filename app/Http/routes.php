@@ -15,6 +15,17 @@ Route::get('/', function () {
     return view('welcome');
 });
 
+Route::get('/foto', function() {
+	$foto = App\Http\Models\Foto::wherePetaId(1)->get();
+
+	foreach ($foto as $q) {
+		if (File::exists(public_path().'/'.$q->url_foto)) {
+            unlink(public_path().'/'.$q->url_foto);
+            //echo $q->url_foto;
+        }
+	}
+});
+
 Route::controllers([
 	'auth' => 'Auth\AuthController',
 	'password' => 'Auth\PasswordController',
@@ -24,7 +35,7 @@ Route::get('login', function() {
 	return view('layouts.login');
 });
 
-Route::group(['prefix' => 'admin', 'middleware' => 'auth'], function()
+Route::group(['middleware' => 'auth', 'prefix' => 'admin'], function()
 {
 	Route::get('dashboard', function()
 	{
@@ -45,9 +56,10 @@ Route::group(['prefix' => 'admin', 'middleware' => 'auth'], function()
 	Route::get('kategori', ['uses' => 'KategoriController@index']);
 	Route::get('kategori/{slug}', ['uses' => 'KategoriController@show']);
 	Route::post('foto/upload', ['uses' => 'FotoController@store']);
+	Route::post('foto/hapus', ['uses' => 'FotoController@delete']);
 });
 
-Route::group(['prefix' => 'api/v1/service', 'middleware' => 'apikey'], function()
+Route::group(['middleware' => 'apikey', 'prefix' => 'api/v1/service'], function()
 {
 	Route::get('peta', ['uses' => 'ApiController@peta']);
 	Route::get('peta/cari', ['uses' => 'ApiController@caripeta']);
