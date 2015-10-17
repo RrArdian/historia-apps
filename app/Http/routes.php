@@ -16,14 +16,9 @@ Route::get('/', function () {
 });
 
 Route::get('/foto', function() {
-	$foto = App\Http\Models\Foto::wherePetaId(1)->get();
+	$dafuq = bcrypt('goestopimnas');
 
-	foreach ($foto as $q) {
-		if (File::exists(public_path().'/'.$q->url_foto)) {
-            unlink(public_path().'/'.$q->url_foto);
-            //echo $q->url_foto;
-        }
-	}
+	return $dafuq;
 });
 
 Route::controllers([

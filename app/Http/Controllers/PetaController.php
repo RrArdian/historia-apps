@@ -10,6 +10,7 @@ use App\Http\Models\Foto;
 use App\Http\Models\Kabupaten;
 use App\Http\Models\Kategori;
 use App\Http\Models\Peta;
+use App\Http\Models\Video;
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
 
@@ -92,6 +93,12 @@ class PetaController extends Controller
                 $foto->url_foto = 'assets/img/cagar-budaya/' . $newname;
                 $foto->save();
             }
+
+            $video = new Video;
+            $video->peta_id = Peta::max('id');
+            $video->nama_video = $request->input('nama') . ' Video';
+            $video->link_video = $request->input('video');
+            $video->save();
 
             return redirect('admin/peta')->with('message', 'Data peta cagar budaya berhasil ditambahkan!');
         }

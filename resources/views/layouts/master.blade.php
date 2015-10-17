@@ -92,6 +92,11 @@
 						</a>
 					</li>
 					<li>
+						<a href="{{ url('admin/video') }}">
+							<i class="fa fa-video-camera"></i> <span>Video</span>
+						</a>
+					</li>
+					<li>
 						<a href="{{ url('admin/kategori') }}">
 							<i class="fa fa-tags"></i> <span>Kategori</span>
 						</a>

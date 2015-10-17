@@ -3,12 +3,6 @@
 @section('css-content')
 <link rel="stylesheet" href="{{ asset('assets/plugins/bootstrap-wysihtml5/bootstrap3-wysihtml5.min.css') }}">
 <link rel="stylesheet" href="{{ asset('assets/plugins/dropzone/dropzone.min.css') }}">
-<style>
-	#map {
-		height:300px;
-		background:#6699cc;
-	}
-</style>
 @stop
 
 @section('title')
@@ -91,6 +85,10 @@ Peta Cagar Budaya
 						<div id="urlpics">
 						</div>
 						<div class="form-group">
+							<label for="content" class="control-label">Link Video</label>
+							<input type="text" id="video" name="video" class="form-control" required>
+						</div>
+						<div class="form-group">
 							<button class="btn btn-primary btn-md" type="submit"><i class="fa fa-save"></i> Simpan</button>
 						</div>
 					</form>
@@ -102,9 +100,6 @@ Peta Cagar Budaya
 @stop
 
 @section('js-content')
-<script src="//maps.google.com/maps/api/js?sensor=true"></script>
-<script src="{{ asset('assets/js/gmaps.min.js') }}"></script>
-<script src="{{ asset('assets/js/maps-script.min.js') }}"></script>
 <script src="{{ asset('assets/plugins/dropzone/dropzone.min.js') }}"></script>
 <script src="{{ asset('assets/plugins/bootstrap-wysihtml5/bootstrap3-wysihtml5.all.min.js') }}"></script>
 <script>
